@@ -6,15 +6,18 @@ class SlackListener < Redmine::Hook::Listener
 
 	def controller_issues_new_after_save(context={})
 
-		$stdout = File.open('f_controller_issues_new_after_save_telegram.txt', 'a')
-		$stderr = File.open('f_err_controller_issues_new_after_save_telegram.txt', 'a')
+		# $stdout = File.open('f_controller_issues_new_after_save_telegram.txt', 'a')
+		# $stderr = File.open('f_err_controller_issues_new_after_save_telegram.txt', 'a')
+
 
     issue = context[:issue]
     url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
 
+
 		msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Статус*: #{escape(issue.status.to_s)}\n*Приоритет*: #{escape(issue.priority.to_s)}\n*Назначена на*: #{escape(issue.assigned_to.to_s)}"
 		journal = issue.current_journal
+
 
     telegram_users = []
 		if journal != nil then
@@ -51,67 +54,80 @@ class SlackListener < Redmine::Hook::Listener
 
 		end
 
-		p "telegram_users", telegram_users
+
 		telegram_users.map{|user| (speak msg, user, url)}
 
 	end
 
 	def controller_issues_edit_after_save(context={})
-		$stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
+		# $stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
 
 		issue = context[:issue]
 		journal = context[:journal]
 
 
+    # get telegram API url from plugin settings
 		url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
+
+
+    # form message
     msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Обновлена*: #{escape journal.user.to_s}\n"
     journal.details.map { |d| msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n" }
 
     if journal.notes != "" then
+
       msg += "*Комментарий*: \"#{escape journal.notes}\""
+
     end
 
+
+    # get watchers, notified users
 		to = journal.notified_users
     cc = journal.notified_watchers
-    p "to",to,"cc",cc
 		watchers = to | cc
 		cu = User.current
 		if cu.pref.no_self_notified == true then
+
 			watchers.delete(cu)
-		end
+
+    end
+
+
+    # get telegram username from user profile settings
 		telegram_users = []
 		for user in watchers
+
 			cv = User.find_by_mail(user[:mail]).custom_value_for(2)
 			next unless cv
+
 			telegram_users.push(cv.value)
+
 		end
-		p "telegram_users", telegram_users.length, telegram_users
+
+
+    # send message
 		telegram_users.map{|user| (speak msg, user, url)}
 	end
 
 
 
 	def speak(msg, user, url)
-    $stdout = File.open('f_controller_speak_telegram.txt', 'a')
 
     f = File.new("address_book")
     my_hash = JSON.parse(f.read)
     f.close
-    p "my_hash",my_hash
-    p "user", user
-    user = my_hash[user].to_i
-    p "user2", user
 
+    user = my_hash[user]
     return unless user
 
+
 		params = {
-      :chat_id => user,
+      :chat_id => user.to_i,
 			:text => msg,
       :parse_mode => "Markdown"
 		}
 
-    p params
 
 		client = HTTPClient.new
     client.send_timeout = 1
@@ -119,6 +135,7 @@ class SlackListener < Redmine::Hook::Listener
 		client.ssl_config.cert_store.set_default_paths
 		client.ssl_config.ssl_version = "SSLv23"
 		client.post url, params
+
   end
 
 private
