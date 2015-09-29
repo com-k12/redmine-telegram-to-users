@@ -66,7 +66,7 @@ class SlackListener < Redmine::Hook::Listener
     # p
     # p journal
 
-		url = url_for_project issue.project
+		url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
     issue_url = p object_url issue
     issue_subj = issue.subject
@@ -96,10 +96,8 @@ class SlackListener < Redmine::Hook::Listener
 
 
 
-	def speak(msg, user)
+	def speak(msg, user, url)
     $stdout = File.open('f_controller_speak_telegram.txt', 'a')
-
-    url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 
     f = File.new("../../source")
     my_hash = JSON.parse(f.read)
