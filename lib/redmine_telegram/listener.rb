@@ -107,7 +107,8 @@ class SlackListener < Redmine::Hook::Listener
 
 		params = {
       :chat_id => user,
-			:text => msg
+			:text => msg,
+      :parse_mode => "Markdown"
 		}
 
     p params
