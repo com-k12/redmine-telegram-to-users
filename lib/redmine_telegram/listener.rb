@@ -90,7 +90,7 @@ class SlackListener < Redmine::Hook::Listener
 			next unless cv
 			slack_users.push(cv.value)
 		end
-		p watchers, slack_users
+		p "watchers, slack_users",watchers, slack_users
 		slack_users.map{|user| (speak msg, user, url)}
 	end
 
