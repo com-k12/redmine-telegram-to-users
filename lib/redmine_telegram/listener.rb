@@ -93,6 +93,9 @@ class SlackListener < Redmine::Hook::Listener
 	def speak(msg, user, url)
     $stdout = File.open('f_controller_speak_telegram.txt', 'a')
 
+    p "url", url
+    return unless url
+
     f = File.new("address_book")
     my_hash = JSON.parse(f.read)
     f.close
@@ -101,7 +104,6 @@ class SlackListener < Redmine::Hook::Listener
     user = my_hash[user].to_i
     p "user2", user
 
-    p url
     return unless user
 
 		params = {
@@ -110,6 +112,8 @@ class SlackListener < Redmine::Hook::Listener
 		}
 
     p params
+
+    return
 
 		client = HTTPClient.new
 		client.ssl_config.cert_store.set_default_paths
