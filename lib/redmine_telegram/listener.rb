@@ -63,7 +63,7 @@ class SlackListener < Redmine::Hook::Listener
 
     p "\n\n\n\n"
     p object_url issue
-    p issue[:subject]
+    p issue.subject
     p journal
 
     return
