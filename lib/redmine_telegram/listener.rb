@@ -74,6 +74,7 @@ class SlackListener < Redmine::Hook::Listener
 
 		to = journal.notified_users
     cc = journal.notified_watchers
+    p "to",to,"cc",cc
 		watchers = to | cc
 		cu = User.current
 		if cu.pref.no_self_notified == true then
