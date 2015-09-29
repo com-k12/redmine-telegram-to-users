@@ -101,6 +101,7 @@ class SlackListener < Redmine::Hook::Listener
     user = my_hash[user].to_i
     p "user2", user
 
+    p url
     return unless user
 
 		params = {
