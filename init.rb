@@ -1,6 +1,6 @@
 require 'redmine'
 
-require_dependency 'redmine_telegram/listener'
+require_dependency 'redmine_telegram_to_users/listener'
 
 Redmine::Plugin.register :redmine_telegram do
 	name 'Redmine Telegram To Users'
@@ -9,11 +9,5 @@ Redmine::Plugin.register :redmine_telegram do
 	author_url 'http://k12.ru'
 	description 'Telegram integration'
 	version '1.0'
-
-  settings \
-  :default => {
-			'empty' => true,
-		},
-		:partial => 'settings/redmine_telegram_settings'
-
+  settings :default => {'empty' => true}, :partial => 'settings/telegram_settings'
 end
