@@ -51,7 +51,7 @@ class SlackListener < Redmine::Hook::Listener
 		end
 
 		p "telegram_users", telegram_users
-		telegram_users.map{|user| (speak msg, user, "")}
+		telegram_users.map{|user| (speak msg, user, url)}
 
 	end
 
@@ -92,9 +92,6 @@ class SlackListener < Redmine::Hook::Listener
 
 	def speak(msg, user, url)
     $stdout = File.open('f_controller_speak_telegram.txt', 'a')
-
-    p "url", url
-    return unless url
 
     f = File.new("address_book")
     my_hash = JSON.parse(f.read)
