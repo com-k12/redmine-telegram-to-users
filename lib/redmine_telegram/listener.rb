@@ -71,7 +71,7 @@ class SlackListener < Redmine::Hook::Listener
     issue_url = p object_url issue
     issue_subj = issue.subject
     # msg = issue_subj + "  " + issue_url
-    msg = "Issue: \"#{issue_subj}\"\n#{issue_url}\nwas updated by #{escape journal.user.to_s}\nComment #{escape journal.notes if journal.notes}"
+    msg = "Issue: \"#{issue_subj}\"\n#{issue_url}\nwas updated by #{escape journal.user.to_s}\nComment \"#{escape journal.notes if journal.notes}\""
     # p url
     p msg
     #
