@@ -65,7 +65,7 @@ class SlackListener < Redmine::Hook::Listener
 
 		url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
-    msg = "*Задача*: \"#{issue.subject}\"\n_#{object_url issue}_\n*Обновлена*: #{escape journal.user.to_s}\n"
+    msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Обновлена*: #{escape journal.user.to_s}\n"
     journal.details.map { |d| msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n" }
 
     if journal.notes != "" then
