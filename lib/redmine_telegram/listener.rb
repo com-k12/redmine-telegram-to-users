@@ -8,10 +8,13 @@ class SlackListener < Redmine::Hook::Listener
 		$stdout = File.open('f_controller_issues_new_after_save_telegram.txt', 'a')
 		$stderr = File.open('f_err_controller_issues_new_after_save_telegram.txt', 'a')
 
-    p context
-    return
+    issue = context[:issue]
+    url = Setting.plugin_redmine_telegram[:telegram_url] if not url
+		return unless url
+    issue_url = p object_url issue
+    issue_subj = issue.subject
 
-		issue = context[:issue]
+		msg = "Issue: \"#{issue_subj}\"\n#{issue_url}\nStatus: #{escape(issue.status.to_s)}\nPriority#{escape(issue.priority.to_s)}\nAssigned to: #{escape(issue.assigned_to.to_s)}"
 
 		journal = issue.current_journal
 		p "journal", journal
@@ -68,14 +71,13 @@ class SlackListener < Redmine::Hook::Listener
 
 		url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
-    issue_url = p object_url issue
+    issue_url = object_url issue
     issue_subj = issue.subject
     # msg = issue_subj + "  " + issue_url
-    msg = "Issue: \"#{issue_subj}\"\n#{issue_url}\nwas updated by #{escape journal.user.to_s}\nComment \"#{escape journal.notes if journal.notes}\""
-    # p url
-    p msg
-    #
-    # return
+    msg = "Issue: \"#{issue_subj}\"\n#{issue_url}\nwas updated by #{escape journal.user.to_s}\n"
+    comment = "Comment \"#{escape journal.notes if journal.notes}\""
+    details = journal.details.map { |d| detail_to_field d }
+    p "details", details
 
 		to = journal.notified_users
     cc = journal.notified_watchers
