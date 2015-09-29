@@ -13,7 +13,7 @@ class SlackListener < Redmine::Hook::Listener
     url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
 
-		msg = "Задача: \"#{issue.subject}\"\n#{object_url issue}\nСтатус: #{escape(issue.status.to_s)}\nПриоритет: #{escape(issue.priority.to_s)}\nНазначена на: #{escape(issue.assigned_to.to_s)}"
+		msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Статус*: #{escape(issue.status.to_s)}\n*Приоритет*: #{escape(issue.priority.to_s)}\n*Назначена на*: #{escape(issue.assigned_to.to_s)}"
 		journal = issue.current_journal
 
     telegram_users = []
@@ -65,11 +65,11 @@ class SlackListener < Redmine::Hook::Listener
 
 		url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
-    msg = "Задача: \"#{issue.subject}\"\n#{object_url issue}\nОбновлена: #{escape journal.user.to_s}\n"
-    journal.details.map { |d| msg+="#{detail_to_field(d)[:title]}: #{detail_to_field(d)[:value]}\n" }
+    msg = "*Задача*: \"#{issue.subject}\"\n_#{object_url issue}_\n*Обновлена*: #{escape journal.user.to_s}\n"
+    journal.details.map { |d| msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n" }
 
     if journal.notes != "" then
-      msg += "Комментарий: \"#{escape journal.notes}\""
+      msg += "*Комментарий*: \"#{escape journal.notes}\""
     end
 
 		to = journal.notified_users
