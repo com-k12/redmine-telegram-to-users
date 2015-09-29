@@ -91,7 +91,7 @@ class SlackListener < Redmine::Hook::Listener
 			telegram_users.push(cv.value)
 		end
 		p "telegram_users", telegram_users.length, telegram_users
-		slack_users.map{|user| (speak msg, user, url)}
+		telegram_users.map{|user| (speak msg, user, url)}
 	end
 
 
