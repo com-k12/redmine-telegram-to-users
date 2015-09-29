@@ -11,10 +11,8 @@ class SlackListener < Redmine::Hook::Listener
     issue = context[:issue]
     url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
-    issue_url = p object_url issue
-    issue_subj = issue.subject
 
-		msg = "Issue: \"#{issue_subj}\"\n#{issue_url}\nStatus: #{escape(issue.status.to_s)}\nPriority#{escape(issue.priority.to_s)}\nAssigned to: #{escape(issue.assigned_to.to_s)}"
+		msg = "Issue: \"#{issue.subject}\"\n#{object_url issue}\nStatus: #{escape(issue.status.to_s)}\nPriority#{escape(issue.priority.to_s)}\nAssigned to: #{escape(issue.assigned_to.to_s)}"
 
 		journal = issue.current_journal
 		p "journal", journal
@@ -64,20 +62,15 @@ class SlackListener < Redmine::Hook::Listener
 		issue = context[:issue]
 		journal = context[:journal]
 
-    p "\n\n\n\n"
-    # p object_url issue
-    # p
-    # p journal
 
 		url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
-    issue_url = object_url issue
-    issue_subj = issue.subject
-    # msg = issue_subj + "  " + issue_url
-    msg = "Issue: \"#{issue_subj}\"\n#{issue_url}\nwas updated by #{escape journal.user.to_s}\n"
-    comment = "Comment \"#{escape journal.notes if journal.notes}\""
-    details = journal.details.map { |d| detail_to_field d }
-    p "details", details
+    msg = "Issue: \"#{issue.subject}\"\n#{object_url issue}\nwas updated by #{escape journal.user.to_s}\n"
+    journal.details.map { |d| s+="#{detail_to_field(d)[:title]}: #{detail_to_field(d)[:value]}\n" }
+
+    if journal.notes then
+      msg += "Comment \"#{escape journal.notes}\""
+    end
 
 		to = journal.notified_users
     cc = journal.notified_watchers
