@@ -12,7 +12,7 @@ Redmine::Plugin.register :redmine_telegram do
 
   settings \
   :default => {
-			'telegram_url' => 'https://api.telegram.org/bot{token}/sendMessage',
+			'empty' => true,
 		},
 		:partial => 'settings/redmine_telegram_settings'
 
