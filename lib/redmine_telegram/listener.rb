@@ -58,9 +58,6 @@ class SlackListener < Redmine::Hook::Listener
 	def controller_issues_edit_after_save(context={})
 		$stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
 
-    p context
-    return
-
 		issue = context[:issue]
 		journal = context[:journal]
 
@@ -68,6 +65,9 @@ class SlackListener < Redmine::Hook::Listener
 		return unless url
 
 		msg = issue.project + journal.user.to_s + "updated" + issue
+
+    p msg
+    return
 
 		to = journal.notified_users
     cc = journal.notified_watchers
