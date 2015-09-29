@@ -14,7 +14,7 @@ class SlackListener < Redmine::Hook::Listener
 
 		msg = "Issue: \"#{issue.subject}\"\n#{object_url issue}\nStatus: #{escape(issue.status.to_s)}\nPriority#{escape(issue.priority.to_s)}\nAssigned to: #{escape(issue.assigned_to.to_s)}"
 		journal = issue.current_journal
-    
+
     telegram_users = []
 		if journal != nil then
 
