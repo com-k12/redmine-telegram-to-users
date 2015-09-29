@@ -13,7 +13,7 @@ class SlackListener < Redmine::Hook::Listener
     url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
 
-		msg = "Задача: \"#{issue.subject}\"\n#{object_url issue}\nСтатус#{escape(issue.status.to_s)}\nПриоритет#{escape(issue.priority.to_s)}\nНазначена на: #{escape(issue.assigned_to.to_s)}"
+		msg = "Задача: \"#{issue.subject}\"\n#{object_url issue}\nСтатус: #{escape(issue.status.to_s)}\nПриоритет: #{escape(issue.priority.to_s)}\nНазначена на: #{escape(issue.assigned_to.to_s)}"
 		journal = issue.current_journal
 
     telegram_users = []
