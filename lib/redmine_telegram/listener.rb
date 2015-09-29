@@ -84,13 +84,13 @@ class SlackListener < Redmine::Hook::Listener
 		if cu.pref.no_self_notified == true then
 			watchers.delete(cu)
 		end
-		slack_users = []
+		telegram_users = []
 		for user in watchers
 			cv = User.find_by_mail(user[:mail]).custom_value_for(2)
 			next unless cv
-			slack_users.push(cv.value)
+			telegram_users.push(cv.value)
 		end
-		p "watchers, slack_users",watchers, slack_users
+		p "telegram_users", len(telegram_users), telegram_users
 		slack_users.map{|user| (speak msg, user, url)}
 	end
 
