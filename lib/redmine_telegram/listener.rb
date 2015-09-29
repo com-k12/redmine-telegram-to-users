@@ -104,7 +104,7 @@ class SlackListener < Redmine::Hook::Listener
     f.close
     p "my_hash",my_hash
     p "user", user
-    user = my_hash[user]
+    user = my_hash[user].to_i
     p "user2", user
 
     return unless user
