@@ -11,6 +11,6 @@ Redmine::Plugin.register :redmine_telegram do
 	version '1.0'
 
   settings \
-		:partial => 'settings/telegram_settings'
+		:partial => 'settings/_telegram_settings'
 
 end
