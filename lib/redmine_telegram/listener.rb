@@ -70,8 +70,8 @@ class SlackListener < Redmine::Hook::Listener
 		return unless url
     issue_url = p object_url issue
     issue_subj = issue.subject
-    msg = issue_subj + "  " + issue_url
-    #msg = "Задача #{issue_subj}\n#{issue_url}\nобновлена"
+    # msg = issue_subj + "  " + issue_url
+    msg = "Issue #{issue_subj}\n#{issue_url}\nwas updated by #{escape journal.user.to_s}\nComment #{escape journal.notes if journal.notes}"
     p url
     p msg
 
@@ -122,6 +122,10 @@ class SlackListener < Redmine::Hook::Listener
   end
 
 private
+  def escape(msg)
+		msg.to_s.gsub("&", "&amp;").gsub("<", "&lt;").gsub(">", "&gt;")
+  end
+
 	def object_url(obj)
 		Rails.application.routes.url_for(obj.event_url({:host => Setting.host_name, :protocol => Setting.protocol}))
 	end
