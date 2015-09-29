@@ -62,7 +62,8 @@ class SlackListener < Redmine::Hook::Listener
 		journal = context[:journal]
 
     p "\n\n\n\n"
-    p issue
+    p object_url issue
+    p issue[:subject]
     p journal
 
     return
@@ -119,4 +120,9 @@ class SlackListener < Redmine::Hook::Listener
 		client.ssl_config.ssl_version = "SSLv23"
 		client.post url, {:payload => params.to_json}
   end
+
+private
+	def object_url(obj)
+		Rails.application.routes.url_for(obj.event_url({:host => Setting.host_name, :protocol => Setting.protocol}))
+	end
 end
