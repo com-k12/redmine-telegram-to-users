@@ -110,8 +110,6 @@ class SlackListener < Redmine::Hook::Listener
 
     p params
 
-    return
-
 		client = HTTPClient.new
 		client.ssl_config.cert_store.set_default_paths
 		client.ssl_config.ssl_version = "SSLv23"
