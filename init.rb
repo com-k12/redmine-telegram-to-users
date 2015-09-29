@@ -1,6 +1,6 @@
 require 'redmine'
 
-require_dependency 'redmine_telegram_to_users/listener'
+require_dependency 'redmine_telegram/listener'
 
 Redmine::Plugin.register :redmine_telegram do
 	name 'Redmine Telegram To Users'
