@@ -112,7 +112,7 @@ class SlackListener < Redmine::Hook::Listener
 		params = {
       :chat_id => user,
 			:text => msg
-		}.to_json
+		}
 
     p params
 
