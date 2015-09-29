@@ -68,7 +68,7 @@ class SlackListener < Redmine::Hook::Listener
     msg = "Задача: \"#{issue.subject}\"\n#{object_url issue}\nОбновлена: #{escape journal.user.to_s}\n"
     journal.details.map { |d| msg+="#{detail_to_field(d)[:title]}: #{detail_to_field(d)[:value]}\n" }
 
-    if journal.notes then
+    if journal.notes != "" then
       msg += "Комментарий: \"#{escape journal.notes}\""
     end
 
@@ -113,6 +113,8 @@ class SlackListener < Redmine::Hook::Listener
     p params
 
 		client = HTTPClient.new
+    client.send_timeout = 1
+    client.receive_timeout = 1
 		client.ssl_config.cert_store.set_default_paths
 		client.ssl_config.ssl_version = "SSLv23"
 		client.post url, params
