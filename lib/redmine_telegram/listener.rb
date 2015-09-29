@@ -70,7 +70,8 @@ class SlackListener < Redmine::Hook::Listener
 		return unless url
     issue_url = p object_url issue
     issue_subj = issue.subject
-    msg = "Задача #{issue_subj}\n#{issue_url}\nобновлена"
+    msg = issue_subj + "  " + issue_url
+    #msg = "Задача #{issue_subj}\n#{issue_url}\nобновлена"
     p url
     p msg
 
