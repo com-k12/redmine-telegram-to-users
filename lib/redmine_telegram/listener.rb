@@ -13,10 +13,9 @@ class SlackListener < Redmine::Hook::Listener
 		return unless url
 
 		msg = "Issue: \"#{issue.subject}\"\n#{object_url issue}\nStatus: #{escape(issue.status.to_s)}\nPriority#{escape(issue.priority.to_s)}\nAssigned to: #{escape(issue.assigned_to.to_s)}"
-
 		journal = issue.current_journal
-		p "journal", journal
-
+    
+    telegram_users = []
 		if journal != nil then
 
 			to = journal.notified_users
@@ -29,7 +28,7 @@ class SlackListener < Redmine::Hook::Listener
 			for user in watchers
 				cv = User.find_by_mail(user[:mail]).custom_value_for(2)
 				next unless cv
-				slack_users.push(cv.value)
+				telegram_users.push(cv.value)
 			end
 
 		else
@@ -46,13 +45,13 @@ class SlackListener < Redmine::Hook::Listener
 				cv = us.custom_value_for(2)
 				puts cv, cv.class
 				next unless cv
-				slack_users.push(cv.value)
+				telegram_users.push(cv.value)
 			end
 
 		end
 
-		p slack_users
-		slack_users.map{|user| (speak msg, user, "")}
+		p "telegram_users", telegram_users
+		telegram_users.map{|user| (speak msg, user, "")}
 
 	end
 
