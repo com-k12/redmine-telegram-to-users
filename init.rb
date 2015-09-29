@@ -9,4 +9,8 @@ Redmine::Plugin.register :redmine_telegram do
 	author_url 'http://k12.ru'
 	description 'Telegram integration'
 	version '1.0'
+
+  settings \
+		:partial => 'settings/telegram_settings'
+
 end
