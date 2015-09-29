@@ -72,10 +72,10 @@ class SlackListener < Redmine::Hook::Listener
     issue_subj = issue.subject
     # msg = issue_subj + "  " + issue_url
     msg = "Issue #{issue_subj}\n#{issue_url}\nwas updated by #{escape journal.user.to_s}\nComment #{escape journal.notes if journal.notes}"
-    p url
-    p msg
-
-    return
+    # p url
+    # p msg
+    #
+    # return
 
 		to = journal.notified_users
     cc = journal.notified_watchers
@@ -91,7 +91,7 @@ class SlackListener < Redmine::Hook::Listener
 			slack_users.push(cv.value)
 		end
 		p watchers, slack_users
-		slack_users.map{|user| (speak msg, user)}
+		slack_users.map{|user| (speak msg, user, url)}
 	end
 
 
@@ -103,7 +103,6 @@ class SlackListener < Redmine::Hook::Listener
     my_hash = JSON.parse(f.read)
     f.close
     user = my_hash[user]
-
     p user
 
     return unless user
