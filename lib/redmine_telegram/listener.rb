@@ -62,17 +62,18 @@ class SlackListener < Redmine::Hook::Listener
 		journal = context[:journal]
 
     p "\n\n\n\n"
-    p object_url issue
-    p issue.subject
-    p journal
+    # p object_url issue
+    # p
+    # p journal
 
-    return
 		url = url_for_project issue.project
 		return unless url
-
-		msg = issue.project + journal.user.to_s + "updated" + issue
-
+    issue_url = p object_url issue
+    issue_subj = issue.subject
+    msg = "Задача #{issue_subj}\n#{issue_url}\nобновлена"
+    p url
     p msg
+
     return
 
 		to = journal.notified_users
