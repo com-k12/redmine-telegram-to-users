@@ -51,7 +51,7 @@ class SlackListener < Redmine::Hook::Listener
 		end
 
 		p slack_users
-		slack_users.map{|user| (speak msg, user)}
+		slack_users.map{|user| (speak msg, user, "")}
 
 	end
 
