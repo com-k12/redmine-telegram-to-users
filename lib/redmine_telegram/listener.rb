@@ -129,12 +129,22 @@ class SlackListener < Redmine::Hook::Listener
 		}
 
 
-		client = HTTPClient.new
-    client.send_timeout = 1
-    client.receive_timeout = 1
-		client.ssl_config.cert_store.set_default_paths
-		client.ssl_config.ssl_version = "SSLv23"
-		client.post url, params
+    begin
+
+      client = HTTPClient.new
+      client.send_timeout = 5
+      client.receive_timeout = 5
+      client.ssl_config.cert_store.set_default_paths
+      client.ssl_config.ssl_version = "SSLv23"
+      client.post url, params
+
+    rescue => detail
+
+        $stderr = File.open('redmine-telegram.exc', 'a')
+        p detail, detail.backtrace
+
+    end
+
 
   end
 
