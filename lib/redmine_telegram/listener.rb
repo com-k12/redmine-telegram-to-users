@@ -140,8 +140,7 @@ class SlackListener < Redmine::Hook::Listener
 
     rescue => detail
 
-        $stderr = File.open('redmine-telegram.exc', 'a')
-        p detail, detail.backtrace
+        #pass
 
     end
 
