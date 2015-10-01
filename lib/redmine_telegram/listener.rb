@@ -113,25 +113,24 @@ class SlackListener < Redmine::Hook::Listener
 
 
 	def speak(msg, user, url)
-
-    return
-
-    f = File.new("address_book")
-    my_hash = JSON.parse(f.read)
-    f.close
-
-    user = my_hash[user]
-    return unless user
-
-
-		params = {
-      :chat_id => user.to_i,
-			:text => msg,
-      :parse_mode => "Markdown"
-		}
-
-
     begin
+
+      f = File.new("address_book")
+      my_hash = JSON.parse(f.read)
+      f.close
+
+      user = my_hash[user]
+      return unless user
+
+
+      params = {
+        :chat_id => user.to_i,
+        :text => msg,
+        :parse_mode => "Markdown"
+      }
+
+
+
 
       client = HTTPClient.new
       client.send_timeout = 5
