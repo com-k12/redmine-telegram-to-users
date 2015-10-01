@@ -121,6 +121,9 @@ class SlackListener < Redmine::Hook::Listener
     user = my_hash[user]
     return unless user
 
+    if user == "@alekseyeliseev" then
+      return
+    end
 
 		params = {
       :chat_id => user.to_i,
