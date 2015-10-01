@@ -114,6 +114,8 @@ class SlackListener < Redmine::Hook::Listener
 
 	def speak(msg, user, url)
 
+    return
+
     f = File.new("address_book")
     my_hash = JSON.parse(f.read)
     f.close
@@ -121,9 +123,6 @@ class SlackListener < Redmine::Hook::Listener
     user = my_hash[user]
     return unless user
 
-    if user == "@alekseyeliseev" then
-      return
-    end
 
 		params = {
       :chat_id => user.to_i,
