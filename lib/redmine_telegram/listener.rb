@@ -60,54 +60,64 @@ class SlackListener < Redmine::Hook::Listener
 	end
 
 	def controller_issues_edit_after_save(context={})
-		# $stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
+		begin
 
-		issue = context[:issue]
-		journal = context[:journal]
+			$stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
 
+			issue = context[:issue]
+			journal = context[:journal]
 
-    # get telegram API url from plugin settings
-		url = Setting.plugin_redmine_telegram[:telegram_url] if not url
-		return unless url
+			p issue
 
-
-    # form message
-    msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Обновлена*: #{escape journal.user.to_s}\n"
-    journal.details.map { |d| msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n" }
-
-    if journal.notes != "" then
-
-      msg += "*Комментарий*: \"#{escape journal.notes}\""
-
-    end
+			# get telegram API url from plugin settings
+			url = Setting.plugin_redmine_telegram[:telegram_url] if not url
+			return unless url
 
 
-    # get watchers, notified users
-		to = journal.notified_users
-    cc = journal.notified_watchers
-		watchers = to | cc
-		cu = User.current
-		if cu.pref.no_self_notified == true then
+			# form message
+			msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Обновлена*: #{escape journal.user.to_s}\n"
+			journal.details.map { |d| msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n" }
 
-			watchers.delete(cu)
+			if journal.notes != "" then
 
-    end
+				msg += "*Комментарий*: \"#{escape journal.notes}\""
+
+			end
 
 
-    # get telegram username from user profile settings
-		telegram_users = []
-		for user in watchers
+			# get watchers, notified users
+			to = journal.notified_users
+			cc = journal.notified_watchers
+			watchers = to | cc
+			cu = User.current
+			if cu.pref.no_self_notified == true then
 
-			cv = User.find_by_mail(user[:mail]).custom_value_for(2)
-			next unless cv
+				watchers.delete(cu)
 
-			telegram_users.push(cv.value)
+			end
 
+
+			# get telegram username from user profile settings
+			telegram_users = []
+			for user in watchers
+
+				cv = User.find_by_mail(user[:mail]).custom_value_for(2)
+				next unless cv
+
+				telegram_users.push(cv.value)
+
+			end
+
+
+			# send message
+			telegram_users.map{|user| (speak msg, user, url)}
+
+		rescue => detail
+
+        $stdout = File.open('redmine-telegram.exc', 'a')
+        p detail, detail.backtrace
 		end
 
-
-    # send message
-		telegram_users.map{|user| (speak msg, user, url)}
 	end
 
 
