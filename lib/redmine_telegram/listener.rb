@@ -143,8 +143,8 @@ class SlackListener < Redmine::Hook::Listener
 
 
       client = HTTPClient.new
-      client.send_timeout = 5
-      client.receive_timeout = 5
+      client.send_timeout = 2
+      client.receive_timeout = 2
       client.ssl_config.cert_store.set_default_paths
       client.ssl_config.ssl_version = "SSLv23"
       client.post url, params
