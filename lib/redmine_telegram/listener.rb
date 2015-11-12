@@ -70,7 +70,7 @@ class SlackListener < Redmine::Hook::Listener
 			p issue
 
 			begin
-				p "Ответственный", issue.custom_field_values('Ответственный')
+				p "Ответственный", journal.custom_field_values('Ответственный')
 			rescue => detail
 				 p "detail", detail.backtrace
 			end
