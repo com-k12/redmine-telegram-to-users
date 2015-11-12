@@ -69,6 +69,11 @@ class SlackListener < Redmine::Hook::Listener
 
 			p issue
 
+			begin
+				p issue.custom_field_values('Ответственный')
+			rescue => detail
+				 $stdout = File.open('redmine-telegram.exc', 'a')
+			end
 			# get telegram API url from plugin settings
 			url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 			return unless url
