@@ -67,15 +67,6 @@ class SlackListener < Redmine::Hook::Listener
 			issue = context[:issue]
 			journal = context[:journal]
 
-			p issue
-
-			responsible_user = issue.custom_field_values[0]
-			begin
-				p "Проект", journal.project.users
-				p "Ответственный", responsible_user
-			rescue => detail
-				 p "detail", detail.backtrace
-			end
 			# get telegram API url from plugin settings
 			url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 			return unless url
@@ -96,6 +87,19 @@ class SlackListener < Redmine::Hook::Listener
 			to = journal.notified_users
 			cc = journal.notified_watchers
 			watchers = to | cc
+
+			p "watchers 1", watchers
+			begin
+				responsible_user = issue.custom_field_values[0].to_i
+				for user in journal.project.users
+					if user[:id] == responsible_user then
+						watchers.push({:mail => user[:mail]})
+					end
+				end
+			rescue => detail
+				 p "detail", detail.backtrace
+			end
+
 			cu = User.current
 			if cu.pref.no_self_notified == true then
 
@@ -103,6 +107,7 @@ class SlackListener < Redmine::Hook::Listener
 
 			end
 
+			p "wathers 2", watchers
 
 			# get telegram username from user profile settings
 			telegram_users = []
