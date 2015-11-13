@@ -100,7 +100,7 @@ class SlackListener < Redmine::Hook::Listener
 
 			begin
 				for d in journal.details
-					p d
+					p "journal detail", d
 				end
 			rescue => detail
 				p "detail", detail
