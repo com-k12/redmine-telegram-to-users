@@ -33,7 +33,8 @@ class SlackListener < Redmine::Hook::Listener
 				end
 			end
 
-			msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Статус*: #{escape(issue.status.to_s)}\n*Приоритет*: #{escape(issue.priority.to_s)}\n*Назначена на*: #{escape(issue.assigned_to.to_s)}\n*Ответственный*: #{responsible_user_name}"
+			msg = "Новая задача\n"
+			msg += "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Статус*: #{escape(issue.status.to_s)}\n*Приоритет*: #{escape(issue.priority.to_s)}\n*Назначена на*: #{escape(issue.assigned_to.to_s)}\n*Ответственный*: #{responsible_user_name}"
 
 
 
@@ -116,7 +117,8 @@ class SlackListener < Redmine::Hook::Listener
 			end
 
 			# form message
-			msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Обновлена*: #{escape journal.user.to_s}\n"
+			msg = "Задача обновлена\n"
+			msg += "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Обновлена*: #{escape journal.user.to_s}\n"
 
 			for d in journal.details
 				if d[:prop_key] == 4 then
