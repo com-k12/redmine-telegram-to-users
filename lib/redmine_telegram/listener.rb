@@ -5,79 +5,76 @@ require 'active_resource'
 class SlackListener < Redmine::Hook::Listener
 
 	def controller_issues_new_after_save(context={})
+
+		# $stdout = File.open('f_controller_issues_new_after_save_telegram.txt', 'a')
+		# $stderr = File.open('f_err_controller_issues_new_after_save_telegram.txt', 'a')
+
 		$stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
 
-		begin
-			# $stdout = File.open('f_controller_issues_new_after_save_telegram.txt', 'a')
-			# $stderr = File.open('f_err_controller_issues_new_after_save_telegram.txt', 'a')
+    issue = context[:issue]
+    url = Setting.plugin_redmine_telegram[:telegram_url] if not url
+		return unless url
 
-			
-			issue = context[:issue]
-			url = Setting.plugin_redmine_telegram[:telegram_url] if not url
-			return unless url
+		journal = issue.current_journal
 
-			journal = issue.current_journal
+		responsible_user = issue.custom_field_values[0]
+		responsible_user_data = nil
+		responsible_user_name = "-"
+		for user in context[:project].users
+			if user[:id] == responsible_user.value.to_i then
+				responsible_user_data = user
+				responsible_user_name = "#{escape(user[:firstname])} #{escape(user[:lastname])}"
+			end
+		end
 
-			responsible_user = issue.custom_field_values[0]
-			responsible_user_data = nil
-			responsible_user_name = "-"
-			for user in context[:project].users
-				if user[:id] == responsible_user.value.to_i then
-					responsible_user_data = user
-					responsible_user_name = "#{escape(user[:firstname])} #{escape(user[:lastname])}"
-				end
+		msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Статус*: #{escape(issue.status.to_s)}\n*Приоритет*: #{escape(issue.priority.to_s)}\n*Назначена на*: #{escape(issue.assigned_to.to_s)}\n*Ответственный*: #{responsible_user_name}"
+
+
+
+    telegram_users = []
+		if journal != nil then
+
+			to = journal.notified_users
+			cc = journal.notified_watchers
+			watchers = to | cc
+			if responsible_user_data != nil then
+				watchers.push(responsible_user_data)
+			end
+			cu = User.current
+			if cu.pref.no_self_notified == true then
+				watchers.delete(cu)
+			end
+			for user in watchers
+				cv = User.find_by_mail(user[:mail]).custom_value_for(2)
+				next unless cv
+				telegram_users.push(cv.value)
 			end
 
-			msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Статус*: #{escape(issue.status.to_s)}\n*Приоритет*: #{escape(issue.priority.to_s)}\n*Назначена на*: #{escape(issue.assigned_to.to_s)}\n*Ответственный*: #{responsible_user_name}"
+		else
 
+			cu = User.current
+			recipients = issue.recipients
+			if responsible_user_data != nil then
+				watchers.push(responsible_user_data[:mail])
+			end
+			for mail in recipients
+				us = User.find_by_mail(mail)
 
-
-			telegram_users = []
-			if journal != nil then
-
-				to = journal.notified_users
-				cc = journal.notified_watchers
-				watchers = to | cc
-				if responsible_user_data != nil then
-					watchers.push(responsible_user_data)
-				end
-				cu = User.current
-				if cu.pref.no_self_notified == true then
-					watchers.delete(cu)
-				end
-				for user in watchers
-					cv = User.find_by_mail(user[:mail]).custom_value_for(2)
-					next unless cv
-					telegram_users.push(cv.value)
+				if us == cu && cu.pref.no_self_notified == true then
+					next
 				end
 
-			else
-
-				cu = User.current
-				recipients = issue.recipients
-				if responsible_user_data != nil then
-					watchers.push(responsible_user_data[:mail])
-				end
-				for mail in recipients
-					us = User.find_by_mail(mail)
-
-					if us == cu && cu.pref.no_self_notified == true then
-						next
-					end
-
-					cv = us.custom_value_for(2)
-					puts cv, cv.class
-					next unless cv
-					telegram_users.push(cv.value)
-				end
-
+				cv = us.custom_value_for(2)
+				puts cv, cv.class
+				next unless cv
+				telegram_users.push(cv.value)
 			end
 
+		end
 
-			telegram_users.map{|user| (speak msg, user, url)}
 
-	rescue => detail
-		p "detail", detail
+		telegram_users.map{|user| (speak msg, user, url)}
+
 	end
 
 	def controller_issues_edit_after_save(context={})
