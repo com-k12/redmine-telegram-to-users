@@ -186,6 +186,7 @@ class SlackListener < Redmine::Hook::Listener
 
 
 			# send message
+			print "telegram users  ", telegram_users
 			telegram_users.map{|user| (speak msg, user, url)}
 
 		rescue => detail
