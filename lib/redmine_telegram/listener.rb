@@ -100,13 +100,17 @@ class SlackListener < Redmine::Hook::Listener
 
 			begin
 				for d in journal.details
-					p "journal detail", d
+					if d[:prop_key] == 4 then
+						msg += "*#{detail_to_field(d)[:title]}*: #{responsible_user_name}\n"
+					else
+						msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n"
+					end
 				end
 			rescue => detail
 				p "detail", detail
 			end
 
-			journal.details.map { |d| msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n" }
+			journal.details.map { |d|  }
 
 			if journal.notes != "" then
 
