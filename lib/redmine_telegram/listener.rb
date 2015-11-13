@@ -96,7 +96,7 @@ class SlackListener < Redmine::Hook::Listener
 
 					p "user", user[:id], responsible_user, user[:id].class, responsible_user.value.class
 
-					if user[:id] == responsible_user.value then
+					if user[:id] == responsible_user.value.to_i then
 						p "full user data", user
 						watchers.push(user)
 					end
