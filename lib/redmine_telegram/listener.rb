@@ -64,8 +64,12 @@ class SlackListener < Redmine::Hook::Listener
 				if responsible_user_data != nil then
 					recipients.push(responsible_user_data[:mail])
 				end
-				for mail in recipients
-					us = User.find_by_mail(mail)
+
+				while recipients.length > 0
+					tmp_mail = recipients[0]
+					recipients.delete(tmp_mail)
+
+					us = User.find_by_mail(tmp_mail)
 
 					if us == cu && cu.pref.no_self_notified == true then
 						next
@@ -75,7 +79,20 @@ class SlackListener < Redmine::Hook::Listener
 					puts cv, cv.class
 					next unless cv
 					telegram_users.push(cv.value)
+
 				end
+				# for mail in recipients
+				# 	us = User.find_by_mail(mail)
+        #
+				# 	if us == cu && cu.pref.no_self_notified == true then
+				# 		next
+				# 	end
+        #
+				# 	cv = us.custom_value_for(2)
+				# 	puts cv, cv.class
+				# 	next unless cv
+				# 	telegram_users.push(cv.value)
+				# end
 
 			end
 
