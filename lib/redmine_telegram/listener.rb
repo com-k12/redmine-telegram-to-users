@@ -11,24 +11,20 @@ class SlackListener < Redmine::Hook::Listener
 
 		$stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
 
-		p "KEYS", context.keys()
-
     issue = context[:issue]
     url = Setting.plugin_redmine_telegram[:telegram_url] if not url
 		return unless url
 
 		journal = issue.current_journal
-		responsible_user = issue.custom_field_values[0]
 
+		responsible_user = issue.custom_field_values[0]
+		responsible_user_data = nil
 		responsible_user_name = "-"
-		begin
-			for user in context[:project].users
-				if user[:id] == responsible_user.value.to_i then
-					responsible_user_name = "#{escape(user[:firstname])} #{escape(user[:lastname])}"
-				end
+		for user in context[:project].users
+			if user[:id] == responsible_user.value.to_i then
+				responsible_user_data = user
+				responsible_user_name = "#{escape(user[:firstname])} #{escape(user[:lastname])}"
 			end
-		rescue => detail
-			p "detail", detail
 		end
 
 		msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Статус*: #{escape(issue.status.to_s)}\n*Приоритет*: #{escape(issue.priority.to_s)}\n*Назначена на*: #{escape(issue.assigned_to.to_s)}\n*Ответственный*: #{responsible_user_name}"
@@ -41,6 +37,9 @@ class SlackListener < Redmine::Hook::Listener
 			to = journal.notified_users
 			cc = journal.notified_watchers
 			watchers = to | cc
+			if responsible_user_data != nil then
+				watchers.push(responsible_user_data)
+			end
 			cu = User.current
 			if cu.pref.no_self_notified == true then
 				watchers.delete(cu)
@@ -55,6 +54,9 @@ class SlackListener < Redmine::Hook::Listener
 
 			cu = User.current
 			recipients = issue.recipients
+			if responsible_user_data != nil then
+				watchers.push(responsible_user_data[:mail])
+			end
 			for mail in recipients
 				us = User.find_by_mail(mail)
 
