@@ -10,7 +10,7 @@ class SlackListener < Redmine::Hook::Listener
 
 
 		begin
-			
+
 
 
 			# $stdout = File.open('f_controller_issues_new_after_save_telegram.txt', 'a')
@@ -61,7 +61,7 @@ class SlackListener < Redmine::Hook::Listener
 				cu = User.current
 				recipients = issue.recipients
 				if responsible_user_data != nil then
-					watchers.push(responsible_user_data[:mail])
+					recipients.push(responsible_user_data[:mail])
 				end
 				for mail in recipients
 					us = User.find_by_mail(mail)
