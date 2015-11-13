@@ -150,14 +150,22 @@ class SlackListener < Redmine::Hook::Listener
 
 			# get telegram username from user profile settings
 			telegram_users = []
-			for user in watchers
-
-				cv = User.find_by_mail(user[:mail]).custom_value_for(2)
+			while watchers.length > 0
+				tmp_w = watchers[0]
+				watchers.delete(tmp_w)
+				cv = User.find_by_mail(tmp_w[:mail]).custom_value_for(2)
 				next unless cv
-
 				telegram_users.push(cv.value)
-
 			end
+
+			# for user in watchers
+      #
+			# 	cv = User.find_by_mail(user[:mail]).custom_value_for(2)
+			# 	next unless cv
+      #
+			# 	telegram_users.push(cv.value)
+      #
+			# end
 
 
 			# send message
