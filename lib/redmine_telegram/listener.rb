@@ -11,6 +11,7 @@ class SlackListener < Redmine::Hook::Listener
 
 		$stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
 
+		p "KEYS", context.keys()
 
     issue = context[:issue]
     url = Setting.plugin_redmine_telegram[:telegram_url] if not url
