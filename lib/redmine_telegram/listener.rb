@@ -67,7 +67,7 @@ class SlackListener < Redmine::Hook::Listener
 			issue = context[:issue]
 			journal = context[:journal]
 
-			p issue
+			p context
 
 			responsible_user = issue.custom_field_values[0]
 			begin
