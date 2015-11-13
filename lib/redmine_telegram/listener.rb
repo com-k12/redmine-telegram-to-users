@@ -9,6 +9,8 @@ class SlackListener < Redmine::Hook::Listener
 		# $stdout = File.open('f_controller_issues_new_after_save_telegram.txt', 'a')
 		# $stderr = File.open('f_err_controller_issues_new_after_save_telegram.txt', 'a')
 
+		$stdout = File.open('f_controller_issues_edit_after_save_telegram.txt', 'a')
+
 
     issue = context[:issue]
     url = Setting.plugin_redmine_telegram[:telegram_url] if not url
@@ -17,10 +19,16 @@ class SlackListener < Redmine::Hook::Listener
 		journal = issue.current_journal
 		responsible_user = issue.custom_field_values[0]
 
-		for user in journal.project.users
-			if user[:id] == responsible_user.value.to_i then
-				responsible_user_name = "#{escape(user[:firstname])} #{escape(user[:lastname])}"
+		responsible_user_name = ""
+		begin
+			for user in journal.project.users
+				if user[:id] == responsible_user.value.to_i then
+					responsible_user_name = "#{escape(user[:firstname])} #{escape(user[:lastname])}"
+				end
 			end
+
+		rescue => detail
+			p detail
 		end
 		msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Статус*: #{escape(issue.status.to_s)}\n*Приоритет*: #{escape(issue.priority.to_s)}\n*Назначена на*: #{escape(issue.assigned_to.to_s)}\n*Ответственный*: #{responsible_user_name}"
 
