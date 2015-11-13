@@ -88,24 +88,12 @@ class SlackListener < Redmine::Hook::Listener
 			cc = journal.notified_watchers
 			watchers = to | cc
 
-			p "watchers 1", watchers
-
-			begin
-				responsible_user = issue.custom_field_values[0]
-				for user in journal.project.users
-
-					p "user", user[:id], responsible_user, user[:id].class, responsible_user.value.class
-
-					if user[:id] == responsible_user.value.to_i then
-						p "full user data", user
-						watchers.push(user)
-					end
+			responsible_user = issue.custom_field_values[0]
+			for user in journal.project.users
+				if user[:id] == responsible_user.value.to_i then
+					watchers.push(user)
 				end
-			rescue => detail
-				 p "detail", detail.backtrace
 			end
-
-			p "wathers 2", watchers
 
 			cu = User.current
 			if cu.pref.no_self_notified == true then
@@ -113,8 +101,6 @@ class SlackListener < Redmine::Hook::Listener
 				watchers.delete(cu)
 
 			end
-
-			p "wathers 3", watchers
 
 			# get telegram username from user profile settings
 			telegram_users = []
