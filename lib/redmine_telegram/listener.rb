@@ -94,9 +94,9 @@ class SlackListener < Redmine::Hook::Listener
 				responsible_user = issue.custom_field_values[0]
 				for user in journal.project.users
 
-					p "user", user[:id], responsible_user, user[:id].class, responsible_user.class
+					p "user", user[:id], responsible_user, user[:id].class, responsible_user.value.class
 
-					if user[:id] == responsible_user then
+					if user[:id] == responsible_user.value then
 						p "full user data", user
 						watchers.push(user)
 					end
