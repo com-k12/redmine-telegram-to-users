@@ -86,10 +86,12 @@ class SlackListener < Redmine::Hook::Listener
 
 
 			responsible_user = issue.custom_field_values[0]
+			responsible_user_data = nil
 			responsible_user_name = "-"
 			if journal != nil then
 				for user in journal.project.users
 					if user[:id] == responsible_user.value.to_i then
+						responsible_user_data = user
 						responsible_user_name = "#{escape(user[:firstname])} #{escape(user[:lastname])}"
 					end
 				end
@@ -98,22 +100,15 @@ class SlackListener < Redmine::Hook::Listener
 			# form message
 			msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Обновлена*: #{escape journal.user.to_s}\n"
 
-			begin
-				for d in journal.details
-					if d[:prop_key] == 4 then
-						msg += "*#{detail_to_field(d)[:title]}*: #{responsible_user_name}\n"
-					else
-						msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n"
-					end
+			for d in journal.details
+				if d[:prop_key] == 4 then
+					msg += "*#{detail_to_field(d)[:title]}*: #{responsible_user_name}\n"
+				else
+					msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n"
 				end
-			rescue => detail
-				p "detail", detail
 			end
 
-			journal.details.map { |d|  }
-
 			if journal.notes != "" then
-
 				msg += "*Комментарий*: \"#{escape journal.notes}\""
 			end
 
@@ -122,13 +117,7 @@ class SlackListener < Redmine::Hook::Listener
 			to = journal.notified_users
 			cc = journal.notified_watchers
 			watchers = to | cc
-
-			responsible_user = issue.custom_field_values[0]
-			for user in journal.project.users
-				if user[:id] == responsible_user.value.to_i then
-					watchers.push(user)
-				end
-			end
+			watchers.push(responsible_user_data)
 
 			cu = User.current
 			if cu.pref.no_self_notified == true then
