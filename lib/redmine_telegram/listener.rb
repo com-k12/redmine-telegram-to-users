@@ -85,8 +85,27 @@ class SlackListener < Redmine::Hook::Listener
 			return unless url
 
 
+			responsible_user = issue.custom_field_values[0]
+			responsible_user_name = "-"
+			if journal != nil then
+				for user in journal.project.users
+					if user[:id] == responsible_user.value.to_i then
+						responsible_user_name = "#{escape(user[:firstname])} #{escape(user[:lastname])}"
+					end
+				end
+			end
+
 			# form message
 			msg = "*Задача*: \"#{issue.subject}\"\n#{object_url issue}\n*Обновлена*: #{escape journal.user.to_s}\n"
+
+			begin
+				for d in journal.details
+					p d
+				end
+			rescue => detail
+				p "detail", detail
+			end
+
 			journal.details.map { |d| msg+="*#{detail_to_field(d)[:title]}*: #{detail_to_field(d)[:value]}\n" }
 
 			if journal.notes != "" then
