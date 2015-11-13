@@ -96,7 +96,7 @@ class SlackListener < Redmine::Hook::Listener
 
 			end
 
-
+			p "telegram users CREATE ", telegram_users, "\n"
 			telegram_users.map{|user| (speak msg, user, url)}
 
 
@@ -186,7 +186,7 @@ class SlackListener < Redmine::Hook::Listener
 
 
 			# send message
-			print "telegram users  ", telegram_users
+			p "telegram users EDIT ", telegram_users, "\n"
 			telegram_users.map{|user| (speak msg, user, url)}
 
 		rescue => detail
