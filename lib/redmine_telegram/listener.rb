@@ -91,12 +91,12 @@ class SlackListener < Redmine::Hook::Listener
 			p "watchers 1", watchers
 
 			begin
-				responsible_user = issue.custom_field_values[0].to_i
+				responsible_user = issue.custom_field_values[0]
 				for user in journal.project.users
 
 					p "user", user[:id], responsible_user
 
-					if user[:id] == responsible_user then
+					if user[:id] == responsible_user.to_i then
 						watchers.push(user)
 					end
 				end
